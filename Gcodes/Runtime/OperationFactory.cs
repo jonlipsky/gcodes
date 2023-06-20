@@ -10,7 +10,7 @@ namespace Gcodes.Runtime
     /// </summary>
     public class OperationFactory
     {
-        private HashSet<int> ignoredGcodes = new HashSet<int>();
+        private HashSet<int> _ignoredGcodes = new();
 
         /// <summary>
         /// Get the <see cref="IOperation"/> corresponding to a particular
@@ -23,7 +23,7 @@ namespace Gcodes.Runtime
         {
             Exception ex;
 
-            if (ignoredGcodes.Contains(code.Number))
+            if (_ignoredGcodes.Contains(code.Number))
             {
                 return new Noop(initialState);
             }
@@ -54,7 +54,7 @@ namespace Gcodes.Runtime
         {
             foreach (var number in numbers)
             {
-                ignoredGcodes.Add(number);
+                _ignoredGcodes.Add(number);
             }
         }
     }

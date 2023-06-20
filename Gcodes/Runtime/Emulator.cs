@@ -6,13 +6,13 @@ namespace Gcodes.Runtime
 {
     public class Emulator : Interpreter
     {
-        private MachineState state;
-        private double time;
-        public OperationFactory Operations { get; set; } = new OperationFactory();
+        private MachineState _state;
+        private double _time;
+        public OperationFactory Operations { get; set; } = new();
         public MachineState InitialState { get; set; }
 
-        public event EventHandler<StateChangeEventArgs> StateChanged;
-        public event EventHandler<OperationExecutedEventArgs> OperationExecuted;
+        public event EventHandler<StateChangeEventArgs>? StateChanged;
+        public event EventHandler<OperationExecutedEventArgs>? OperationExecuted;
 
         public Emulator()
         {
@@ -26,20 +26,20 @@ namespace Gcodes.Runtime
 
         public MachineState State
         {
-            get => state;
+            get => _state;
             set
             {
-                state = value;
+                _state = value;
                 OnStateChange();
             }
         }
 
         public double Time
         {
-            get => time;
+            get => _time;
             set
             {
-                time = value;
+                _time = value;
                 OnStateChange();
             }
         }
@@ -82,8 +82,8 @@ namespace Gcodes.Runtime
 
         private void UpdateState(double newTime, MachineState newState)
         {
-            state = newState;
-            time = newTime;
+            _state = newState;
+            _time = newTime;
             OnStateChange();
         }
 

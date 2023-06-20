@@ -8,7 +8,7 @@
     {
         void Visit(Gcode code);
         void Visit(Mcode code);
-        void Visit(Tcode tcode);
+        void Visit(Tcode code);
         void Visit(Ocode code);
     }
 }

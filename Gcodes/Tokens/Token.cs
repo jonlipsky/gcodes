@@ -12,19 +12,12 @@ namespace Gcodes.Tokens
     public class Token : IEquatable<Token>
     {
         /// <summary>
-        /// Create a new <see cref="Token"/> which doesn't have a useful
-        /// string value (e.g. punctuation).
-        /// </summary>
-        /// <param name="span"></param>
-        /// <param name="kind"></param>
-        public Token(Span span, TokenKind kind) : this(span, kind, null) { }
-        /// <summary>
         /// Create a new <see cref="Token"/> out of its constituent parts.
         /// </summary>
         /// <param name="span"></param>
         /// <param name="kind"></param>
         /// <param name="value"></param>
-        public Token(Span span, TokenKind kind, string value)
+        public Token(Span span, TokenKind kind, string? value = null)
         {
             Span = span;
             Kind = kind;
@@ -43,17 +36,17 @@ namespace Gcodes.Tokens
         /// The token's original string text. May be <c>null</c> if the token
         /// kind doesn't care about its source text.
         /// </summary>
-        public string Value { get; }
+        public string? Value { get; }
 
         #region Equals
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Token);
         }
 
-        public bool Equals(Token other)
+        public bool Equals(Token? other)
         {
-            return other != null &&
+            return !ReferenceEquals(other, null) &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Kind == other.Kind &&
                    Value == other.Value;
@@ -64,7 +57,7 @@ namespace Gcodes.Tokens
             var hashCode = -1030702410;
             hashCode = hashCode * -1521134295 + EqualityComparer<Span>.Default.GetHashCode(Span);
             hashCode = hashCode * -1521134295 + Kind.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value ?? string.Empty);
             return hashCode;
         }
 
@@ -83,12 +76,12 @@ namespace Gcodes.Tokens
             return sb.ToString();
         }
 
-        public static bool operator ==(Token token1, Token token2)
+        public static bool operator ==(Token? token1, Token? token2)
         {
-            return EqualityComparer<Token>.Default.Equals(token1, token2);
+            return token1?.Equals(token2) ?? false;
         }
 
-        public static bool operator !=(Token token1, Token token2)
+        public static bool operator !=(Token? token1, Token? token2)
         {
             return !(token1 == token2);
         } 

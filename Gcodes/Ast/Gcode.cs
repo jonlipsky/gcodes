@@ -12,12 +12,12 @@ namespace Gcodes.Ast
     [Serializable]
     public class Gcode : Code, IEquatable<Gcode>
     {
-        private List<Argument> args;
+        private List<Argument> _args;
 
         public Gcode(int number, List<Argument> args, Span span, int? line = null) : base(span, line)
         {
             Number = number;
-            this.args = args;
+            _args = args;
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Gcodes.Ast
         /// <summary>
         /// The full list of arguments attached to this gcode.
         /// </summary>
-        public IReadOnlyList<Argument> Arguments => args;
+        public IReadOnlyList<Argument> Arguments => _args;
 
         /// <summary>
         /// Get the value for a particular <see cref="ArgumentKind"/>, if the
@@ -37,21 +37,13 @@ namespace Gcodes.Ast
         /// <returns></returns>
         public double? ValueFor(ArgumentKind kind)
         {
-            var found = args.Where(arg => arg.Kind == kind);
-
-            if (found.Any())
-            {
-                return found.First().Value;
-            }
-            else
-            {
-                return null;
-            }
+            var found = _args.Where(arg => arg.Kind == kind);
+            return found.FirstOrDefault()?.Value;
         }
 
         public bool HasValue(ArgumentKind kind)
         {
-            return args.Any(arg => arg.Kind == kind);
+            return _args.Any(arg => arg.Kind == kind);
         }
         
         public double? ValueFor(params ArgumentKind[] kinds)
@@ -87,7 +79,7 @@ namespace Gcodes.Ast
         {
             return other != null &&
                    base.Equals(other) &&
-                   args.SequenceEqual(other.args) &&
+                   _args.SequenceEqual(other._args) &&
                    Number == other.Number;
         }
 
@@ -95,7 +87,7 @@ namespace Gcodes.Ast
         {
             var hashCode = 1590044514;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Argument>>.Default.GetHashCode(args);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Argument>>.Default.GetHashCode(_args);
             hashCode = hashCode * -1521134295 + Number.GetHashCode();
             return hashCode;
         }

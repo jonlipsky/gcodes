@@ -1,6 +1,5 @@
 ﻿using Gcodes.Tokens;
 using System;
-using System.Collections.Generic;
 
 namespace Gcodes.Ast
 {
@@ -23,14 +22,14 @@ namespace Gcodes.Ast
         }
 
         #region Equals
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Mcode);
         }
 
-        public bool Equals(Mcode other)
+        public bool Equals(Mcode? other)
         {
-            return other != null &&
+            return !ReferenceEquals(other, null) &&
                    base.Equals(other) &&
                    Number == other.Number;
         }
@@ -43,9 +42,9 @@ namespace Gcodes.Ast
             return hashCode;
         }
 
-        public static bool operator ==(Mcode mcode1, Mcode mcode2)
+        public static bool operator ==(Mcode? mcode1, Mcode? mcode2)
         {
-            return EqualityComparer<Mcode>.Default.Equals(mcode1, mcode2);
+            return mcode1?.Equals(mcode2) ?? false;
         }
 
         public static bool operator !=(Mcode mcode1, Mcode mcode2)

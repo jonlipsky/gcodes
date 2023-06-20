@@ -18,8 +18,8 @@ namespace Gcodes
     /// </summary>
     public class Interpreter : IGcodeVisitor
     {
-        private bool running = false;
-        private FileMap map;
+        private bool _running = false;
+        private FileMap _map;
 
         /// <summary>
         /// Callback fired whenever a comment is encountered during the 
@@ -50,7 +50,7 @@ namespace Gcodes
         /// <param name="src"></param>
         public void Run(string src)
         {
-            map = new FileMap(src);
+            _map = new FileMap(src);
             var lexer = new Lexer(src);
             lexer.CommentDetected += OnCommentDetected;
 
@@ -77,19 +77,19 @@ namespace Gcodes
         public void Run(List<Code> codes)
         {
             OnBeforeRun(codes);
-            running = true;
+            _running = true;
 
             try
             {
                 foreach (var code in codes)
                 {
-                    if (!running) break;
+                    if (!_running) break;
                     code.Accept(this);
                 }
             }
             finally
             {
-                running = false;
+                _running = false;
             }
         }
 
@@ -98,7 +98,7 @@ namespace Gcodes
         /// </summary>
         public void Halt()
         {
-            running = false;
+            _running = false;
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Gcodes
         /// </returns>
         protected SpanInfo SpanInfoFor(Span span)
         {
-            return map?.SpanInfoFor(span);
+            return _map?.SpanInfoFor(span);
         }
 
         /// <summary>
@@ -125,12 +125,12 @@ namespace Gcodes
         /// </returns>
         protected Location LocationFor(int byteIndex)
         {
-            return map?.LocationFor(byteIndex);
+            return _map?.LocationFor(byteIndex);
         }
 
         public virtual void Visit(Gcode code) { }
         public virtual void Visit(Mcode code) { }
-        public virtual void Visit(Tcode tcode) { }
+        public virtual void Visit(Tcode code) { }
         public virtual void Visit(Ocode code) { }
 
         private void OnBeforeParse(List<Token> tokens) {

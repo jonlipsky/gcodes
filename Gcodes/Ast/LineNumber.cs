@@ -15,14 +15,14 @@ namespace Gcodes.Ast
             Number = number;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as LineNumber);
         }
 
-        public bool Equals(LineNumber other)
+        public bool Equals(LineNumber? other)
         {
-            return other != null &&
+            return !ReferenceEquals(other, null) &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Number == other.Number;
         }
@@ -35,12 +35,12 @@ namespace Gcodes.Ast
             return hashCode;
         }
 
-        public static bool operator ==(LineNumber number1, LineNumber number2)
+        public static bool operator ==(LineNumber? number1, LineNumber? number2)
         {
-            return EqualityComparer<LineNumber>.Default.Equals(number1, number2);
+            return number1?.Equals(number2) ?? false;
         }
 
-        public static bool operator !=(LineNumber number1, LineNumber number2)
+        public static bool operator !=(LineNumber? number1, LineNumber? number2)
         {
             return !(number1 == number2);
         }

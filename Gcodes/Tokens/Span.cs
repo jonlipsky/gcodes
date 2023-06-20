@@ -6,12 +6,12 @@ namespace Gcodes.Tokens
     /// <summary>
     /// A location in the source text as a pair of byte indices.
     /// </summary>
-    public struct Span
+    public readonly struct Span
     {
         /// <summary>
         ///  The empty span.
         /// </summary>
-        public static Span Empty = new Span(0, 0);
+        public static Span Empty = new(0, 0);
 
         /// <summary>
         /// The index a segment of text starts at.
@@ -21,7 +21,7 @@ namespace Gcodes.Tokens
         /// The index <b>one after</b> the end of the selected text.
         /// </summary>
         public int End { get; }
-        public int Length { get => End - Start; }
+        public int Length => End - Start;
 
         public Span(int start, int end)
         {
@@ -37,7 +37,7 @@ namespace Gcodes.Tokens
         public int LineNumber(string src)
         {
             var start = Start;
-            return src.Where((_, i) => i < start).Where(c => c == '\n').Count() + 1;
+            return src.Where((_, i) => i < start).Count(c => c == '\n') + 1;
         }
 
         /// <summary>

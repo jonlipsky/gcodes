@@ -57,19 +57,19 @@ namespace Gcodes
 
 
     [Serializable]
-    public class UnexpectedEOFException : ParseException
+    public class UnexpectedEofException : ParseException
     {
         public TokenKind[] Expected { get; }
 
-        public UnexpectedEOFException(TokenKind[] expected)
+        public UnexpectedEofException(TokenKind[] expected)
             : this($"Expected one of [{string.Join(", ", expected)}] but reached the end of input")
         {
             Expected = expected;
         }
-        public UnexpectedEOFException() { }
-        public UnexpectedEOFException(string message) : base(message) { }
-        public UnexpectedEOFException(string message, Exception inner) : base(message, inner) { }
-        protected UnexpectedEOFException(
+        public UnexpectedEofException() { }
+        public UnexpectedEofException(string message) : base(message) { }
+        public UnexpectedEofException(string message, Exception inner) : base(message, inner) { }
+        protected UnexpectedEofException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }

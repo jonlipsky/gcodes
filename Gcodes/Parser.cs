@@ -12,8 +12,8 @@ namespace Gcodes
     /// </summary>
     public class Parser
     {
-        private readonly List<Token> tokens;
-        private int index;
+        private readonly List<Token> _tokens;
+        private int _index;
 
         /// <summary>
         /// Create a new Parser using the provided list of tokens.
@@ -21,8 +21,8 @@ namespace Gcodes
         /// <param name="tokens"></param>
         public Parser(List<Token> tokens)
         {
-            this.tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
-            index = 0;
+            _tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
+            _index = 0;
         }
         /// <summary>
         /// Create a new <see cref="Parser"/>, automatically invoking the 
@@ -39,23 +39,23 @@ namespace Gcodes
         {
             // being finished can mean one of two things.
             // either we've run out of input
-            if (index >= tokens.Count)
+            if (_index >= _tokens.Count)
                 return true;
 
             // or *everything* to the end of the file will be ignored (e.g. line numbers)
             // a line number is just a "N" followed by a number, so we just need to make
             // sure all odd tokens are "N" and the even ones are numbers
-            var tokensLeft = tokens.Count - index;
+            var tokensLeft = _tokens.Count - _index;
             if (tokensLeft % 2 != 0) return false;
 
-            for (int i = index; i < tokens.Count; i += 2)
+            for (int i = _index; i < _tokens.Count; i += 2)
             {
-                if (tokens[i].Kind != TokenKind.N)
+                if (_tokens[i].Kind != TokenKind.N)
                     return false;
             }
-            for (int j = index + 1; j < tokens.Count; j += 2)
+            for (int j = _index + 1; j < _tokens.Count; j += 2)
             {
-                if (tokens[j].Kind != TokenKind.Number)
+                if (_tokens[j].Kind != TokenKind.Number)
                     return false;
             }
 
@@ -71,13 +71,13 @@ namespace Gcodes
 
         internal Mcode ParseMCode()
         {
-            var start = index;
+            var start = _index;
             var line = ParseLineNumber();
 
             var m = Chomp(TokenKind.M);
             if (m == null)
             {
-                index = start;
+                _index = start;
                 return null;
             }
 
@@ -92,13 +92,13 @@ namespace Gcodes
 
         internal Tcode ParseTCode()
         {
-            var start = index;
+            var start = _index;
             var line = ParseLineNumber();
 
             var t = Chomp(TokenKind.T);
             if (t == null)
             {
-                index = start;
+                _index = start;
                 return null;
             }
 
@@ -126,14 +126,14 @@ namespace Gcodes
         /// <returns></returns>
         internal Gcode ParseGCode()
         {
-            var start = index;
+            var start = _index;
 
             var line = ParseLineNumber();
 
             var g = Chomp(TokenKind.G);
             if (g == null)
             {
-                index = start;
+                _index = start;
                 return null;
             }
 
@@ -217,19 +217,19 @@ namespace Gcodes
 
         internal Ocode ParseOCode()
         {
-            var start = index;
+            var start = _index;
             var line = ParseLineNumber();
 
-            var O = Chomp(TokenKind.O);
-            if (O == null)
+            var o = Chomp(TokenKind.O);
+            if (o == null)
             {
-                index = start;
+                _index = start;
                 return null;
             }
 
             var numberTok = ParseInteger() ?? throw ParseError(TokenKind.Number); ;
 
-            var span = O.Span.Merge(numberTok.Span);
+            var span = o.Span.Merge(numberTok.Span);
             if (line != null)
             {
                 span = span.Merge(line.Span);
@@ -275,7 +275,7 @@ namespace Gcodes
             }
             else
             {
-                return new UnexpectedEOFException(expected);
+                return new UnexpectedEofException(expected);
             }
         }
 
@@ -284,7 +284,7 @@ namespace Gcodes
             var tok = Peek();
             if (tok != null && kind.Contains(tok.Kind))
             {
-                index += 1;
+                _index += 1;
                 return tok;
             }
             else
@@ -295,9 +295,9 @@ namespace Gcodes
 
         private Token Peek()
         {
-            if (index < tokens.Count)
+            if (_index < _tokens.Count)
             {
-                return tokens[index];
+                return _tokens[_index];
             }
             else
             {

@@ -12,13 +12,13 @@ namespace Gcodes
     /// </summary>
     public class Lexer
     {
-        List<Pattern> patterns;
-        List<Regex> skips;
-        string src;
-        int pointer;
-        int lineNumber;
+        List<Pattern> _patterns;
+        List<Regex> _skips;
+        string _src;
+        int _pointer;
+        int _lineNumber;
 
-        internal bool Finished => pointer >= src.Length;
+        internal bool Finished => _pointer >= _src.Length;
 
         /// <summary>
         /// Event fired whenever a comment is encountered.
@@ -32,38 +32,38 @@ namespace Gcodes
         /// <param name="src"></param>
         public Lexer(string src)
         {
-            skips = new List<Regex>
+            _skips = new List<Regex>
             {
-                new Regex(@"\G\s+", RegexOptions.Compiled),
-                new Regex(@"\G;([^\n\r]*)", RegexOptions.Compiled),
-                new Regex(@"\G\(([^)\n\r]*)\)", RegexOptions.Compiled),
+                new(@"\G\s+", RegexOptions.Compiled),
+                new(@"\G;([^\n\r]*)", RegexOptions.Compiled),
+                new(@"\G\(([^)\n\r]*)\)", RegexOptions.Compiled),
             };
-            this.src = src;
-            pointer = 0;
-            lineNumber = 0;
+            _src = src;
+            _pointer = 0;
+            _lineNumber = 0;
 
-            patterns = new List<Pattern>
+            _patterns = new List<Pattern>
             {
-                new Pattern(@"G", TokenKind.G),
-                new Pattern(@"O", TokenKind.O),
-                new Pattern(@"N", TokenKind.N),
-                new Pattern(@"M", TokenKind.M),
-                new Pattern(@"T", TokenKind.T),
-                new Pattern(@"X", TokenKind.X),
-                new Pattern(@"Y", TokenKind.Y),
-                new Pattern(@"Z", TokenKind.Z),
-                new Pattern(@"F", TokenKind.F),
-                new Pattern(@"I", TokenKind.I),
-                new Pattern(@"J", TokenKind.J),
-                new Pattern(@"K", TokenKind.K),
-                new Pattern(@"A", TokenKind.A),
-                new Pattern(@"B", TokenKind.B),
-                new Pattern(@"C", TokenKind.C),
-                new Pattern(@"H", TokenKind.H),
-                new Pattern(@"P", TokenKind.P),
-                new Pattern(@"S", TokenKind.S),
+                new(@"G", TokenKind.G),
+                new(@"O", TokenKind.O),
+                new(@"N", TokenKind.N),
+                new(@"M", TokenKind.M),
+                new(@"T", TokenKind.T),
+                new(@"X", TokenKind.X),
+                new(@"Y", TokenKind.Y),
+                new(@"Z", TokenKind.Z),
+                new(@"F", TokenKind.F),
+                new(@"I", TokenKind.I),
+                new(@"J", TokenKind.J),
+                new(@"K", TokenKind.K),
+                new(@"A", TokenKind.A),
+                new(@"B", TokenKind.B),
+                new(@"C", TokenKind.C),
+                new(@"H", TokenKind.H),
+                new(@"P", TokenKind.P),
+                new(@"S", TokenKind.S),
 
-                new Pattern(@"[-+]?(\d+\.\d+|\.\d+|\d+\.?)", TokenKind.Number),
+                new(@"[-+]?(\d+\.\d+|\.\d+|\d+\.?)", TokenKind.Number),
             };
         }
 
@@ -87,20 +87,20 @@ namespace Gcodes
 
             do
             {
-                currentPass = pointer;
+                currentPass = _pointer;
 
-                foreach (var skip in skips)
+                foreach (var skip in _skips)
                 {
-                    var match = skip.Match(src, pointer);
+                    var match = skip.Match(_src, _pointer);
 
                     if (match.Success)
                     {
                         OnCommentDetected(match);
-                        pointer += match.Length;
-                        lineNumber += match.Value.Count(c => c == '\n');
+                        _pointer += match.Length;
+                        _lineNumber += match.Value.Count(c => c == '\n');
                     }
                 }
-            } while (pointer < src.Length && pointer != currentPass);
+            } while (_pointer < _src.Length && _pointer != currentPass);
         }
 
         private void OnCommentDetected(Match match)
@@ -110,7 +110,7 @@ namespace Gcodes
                 var group = match.Groups[i];
                 if (group.Success)
                 {
-                    var span = new Span(pointer, pointer + match.Length);
+                    var span = new Span(_pointer, _pointer + match.Length);
                     CommentDetected?.Invoke(this, new CommentEventArgs(group.Value, span));
                     break;
                 }
@@ -119,27 +119,27 @@ namespace Gcodes
 
         private Token NextToken()
         {
-            foreach (var pat in patterns)
+            foreach (var pat in _patterns)
             {
-                if (pat.TryMatch(src, pointer, out Token tok))
+                if (pat.TryMatch(_src, _pointer, out Token tok))
                 {
-                    pointer = tok.Span.End;
+                    _pointer = tok.Span.End;
                     if (tok.Value != null)
                     {
-                        lineNumber += tok.Value.Count(c => c == '\n');
+                        _lineNumber += tok.Value.Count(c => c == '\n');
                     }
                     return tok;
                 }
             }
 
             var column = CurrentColumn();
-            throw new UnrecognisedCharacterException(lineNumber + 1, column + 1, src[pointer]);
+            throw new UnrecognisedCharacterException(_lineNumber + 1, column + 1, _src[_pointer]);
         }
 
         private int CurrentColumn()
         {
-            var lastNewline = src.LastIndexOf('\n', pointer);
-            return lastNewline < 0 ? pointer : pointer - lastNewline;
+            var lastNewline = _src.LastIndexOf('\n', _pointer);
+            return lastNewline < 0 ? _pointer : _pointer - lastNewline;
         }
     }
 

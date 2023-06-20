@@ -31,14 +31,14 @@ namespace Gcodes.Ast
         public double Value { get; }
 
         #region Equals
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Argument);
         }
 
-        public bool Equals(Argument other)
+        public bool Equals(Argument? other)
         {
-            return other != null &&
+            return !ReferenceEquals(other, null) &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Kind == other.Kind &&
                    Value == other.Value;
@@ -53,12 +53,12 @@ namespace Gcodes.Ast
             return hashCode;
         }
 
-        public static bool operator ==(Argument argument1, Argument argument2)
+        public static bool operator ==(Argument? argument1, Argument? argument2)
         {
-            return EqualityComparer<Argument>.Default.Equals(argument1, argument2);
+            return argument1?.Equals(argument2) ?? false;
         }
 
-        public static bool operator !=(Argument argument1, Argument argument2)
+        public static bool operator !=(Argument? argument1, Argument? argument2)
         {
             return !(argument1 == argument2);
         } 
