@@ -3,8 +3,6 @@ using Gcodes.Runtime;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
-using System;
-using System.IO;
 
 namespace Gcodes.Console
 {

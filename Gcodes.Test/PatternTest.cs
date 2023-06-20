@@ -1,5 +1,4 @@
 ﻿using Gcodes.Tokens;
-using System;
 using Xunit;
 
 namespace Gcodes.Test

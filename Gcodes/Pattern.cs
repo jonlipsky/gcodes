@@ -1,5 +1,4 @@
 ﻿using Gcodes.Tokens;
-using System;
 using System.Text.RegularExpressions;
 
 namespace Gcodes

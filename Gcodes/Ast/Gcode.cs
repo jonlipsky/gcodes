@@ -27,7 +27,7 @@ namespace Gcodes.Ast
         /// <summary>
         /// The full list of arguments attached to this gcode.
         /// </summary>
-        public IReadOnlyList<Argument> Arguments { get => args; }
+        public IReadOnlyList<Argument> Arguments => args;
 
         /// <summary>
         /// Get the value for a particular <see cref="ArgumentKind"/>, if the
@@ -49,9 +49,14 @@ namespace Gcodes.Ast
             }
         }
 
+        public bool HasValue(ArgumentKind kind)
+        {
+            return args.Any(arg => arg.Kind == kind);
+        }
+        
         public double? ValueFor(params ArgumentKind[] kinds)
         {
-            return kinds.Select(kind => ValueFor(kind)).Where(kind => kind != null).FirstOrDefault();
+            return kinds.Select(kind => ValueFor(kind)).FirstOrDefault(kind => kind != null);
         }
 
         public override void Accept(IGcodeVisitor visitor)
@@ -73,12 +78,12 @@ namespace Gcodes.Ast
         }
 
         #region Equals
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Gcode);
         }
 
-        public bool Equals(Gcode other)
+        public bool Equals(Gcode? other)
         {
             return other != null &&
                    base.Equals(other) &&
@@ -95,12 +100,12 @@ namespace Gcodes.Ast
             return hashCode;
         }
 
-        public static bool operator ==(Gcode gcode1, Gcode gcode2)
+        public static bool operator ==(Gcode? gcode1, Gcode? gcode2)
         {
-            return EqualityComparer<Gcode>.Default.Equals(gcode1, gcode2);
+            return gcode1?.Equals(gcode2) ?? false;
         }
 
-        public static bool operator !=(Gcode gcode1, Gcode gcode2)
+        public static bool operator !=(Gcode? gcode1, Gcode? gcode2)
         {
             return !(gcode1 == gcode2);
         }

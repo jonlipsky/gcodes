@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Gcodes.Ast
+﻿namespace Gcodes.Ast
 {
     /// <summary>
     /// An object which can be used to inspect gcodes at runtime using

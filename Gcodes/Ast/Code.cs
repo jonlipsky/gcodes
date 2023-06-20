@@ -1,9 +1,6 @@
 ﻿using Gcodes.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gcodes.Ast
 {
@@ -40,10 +37,9 @@ namespace Gcodes.Ast
             return Equals(obj as Code);
         }
 
-        public bool Equals(Code other)
+        public bool Equals(Code? other)
         {
-            return other != null &&
-                   EqualityComparer<int?>.Default.Equals(Line, other.Line);
+            return other?.Line != null && EqualityComparer<int?>.Default.Equals(Line, other.Line);
         }
 
         public override int GetHashCode()
@@ -51,12 +47,12 @@ namespace Gcodes.Ast
             return -2039293089 + EqualityComparer<int?>.Default.GetHashCode(Line);
         }
 
-        public static bool operator ==(Code code1, Code code2)
+        public static bool operator ==(Code? code1, Code? code2)
         {
-            return EqualityComparer<Code>.Default.Equals(code1, code2);
+            return code1?.Equals(code2) ?? false;
         }
 
-        public static bool operator !=(Code code1, Code code2)
+        public static bool operator !=(Code? code1, Code? code2)
         {
             return !(code1 == code2);
         } 
