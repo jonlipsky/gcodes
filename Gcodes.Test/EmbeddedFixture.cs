@@ -22,7 +22,7 @@ namespace Gcodes.Test
 
             using (var stream = asm.GetManifestResourceStream(filename))
             {
-                using (StreamReader reader = new StreamReader(stream))
+                using (StreamReader reader = new StreamReader(stream!))
                 {
                     return reader.ReadToEnd();
                 }
