@@ -39,7 +39,8 @@ namespace Gcodes.Ast
 
         public bool Equals(Code? other)
         {
-            return other?.Line != null && EqualityComparer<int?>.Default.Equals(Line, other.Line);
+            return other != null &&
+                   EqualityComparer<int?>.Default.Equals(Line, other.Line);
         }
 
         public override int GetHashCode()
@@ -49,7 +50,7 @@ namespace Gcodes.Ast
 
         public static bool operator ==(Code? code1, Code? code2)
         {
-            return code1?.Equals(code2) ?? false;
+            return EqualityComparer<Code?>.Default.Equals(code1, code2);
         }
 
         public static bool operator !=(Code? code1, Code? code2)

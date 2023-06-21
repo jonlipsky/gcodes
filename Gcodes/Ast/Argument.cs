@@ -38,7 +38,7 @@ namespace Gcodes.Ast
 
         public bool Equals(Argument? other)
         {
-            return !ReferenceEquals(other, null) &&
+            return other != null &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Kind == other.Kind &&
                    Value == other.Value;
@@ -55,7 +55,7 @@ namespace Gcodes.Ast
 
         public static bool operator ==(Argument? argument1, Argument? argument2)
         {
-            return argument1?.Equals(argument2) ?? false;
+            return EqualityComparer<Argument?>.Default.Equals(argument1, argument2);
         }
 
         public static bool operator !=(Argument? argument1, Argument? argument2)

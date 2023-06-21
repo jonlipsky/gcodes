@@ -25,7 +25,7 @@ namespace Gcodes.Runtime
 
         public bool Equals(Noop? other)
         {
-            return !ReferenceEquals(other, null) &&
+            return other != null &&
                    EqualityComparer<MachineState>.Default.Equals(_state, other._state) &&
                    Duration.Equals(other.Duration);
         }
@@ -45,7 +45,7 @@ namespace Gcodes.Runtime
 
         public static bool operator ==(Noop? noop1, Noop? noop2)
         {
-            return noop1?.Equals(noop2) ?? false;
+            return EqualityComparer<Noop?>.Default.Equals(noop1, noop2);
         }
 
         public static bool operator !=(Noop? noop1, Noop? noop2)

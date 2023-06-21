@@ -22,7 +22,7 @@ namespace Gcodes.Ast
 
         public bool Equals(LineNumber? other)
         {
-            return !ReferenceEquals(other, null) &&
+            return other != null &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Number == other.Number;
         }
@@ -37,7 +37,7 @@ namespace Gcodes.Ast
 
         public static bool operator ==(LineNumber? number1, LineNumber? number2)
         {
-            return number1?.Equals(number2) ?? false;
+            return EqualityComparer<LineNumber?>.Default.Equals(number1, number2);
         }
 
         public static bool operator !=(LineNumber? number1, LineNumber? number2)

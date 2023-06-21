@@ -46,7 +46,7 @@ namespace Gcodes.Tokens
 
         public bool Equals(Token? other)
         {
-            return !ReferenceEquals(other, null) &&
+            return other != null &&
                    EqualityComparer<Span>.Default.Equals(Span, other.Span) &&
                    Kind == other.Kind &&
                    Value == other.Value;
@@ -78,7 +78,7 @@ namespace Gcodes.Tokens
 
         public static bool operator ==(Token? token1, Token? token2)
         {
-            return token1?.Equals(token2) ?? false;
+            return EqualityComparer<Token?>.Default.Equals(token1, token2);
         }
 
         public static bool operator !=(Token? token1, Token? token2)

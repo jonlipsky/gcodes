@@ -1,5 +1,6 @@
 ﻿using Gcodes.Tokens;
 using System;
+using System.Collections.Generic;
 
 namespace Gcodes.Ast
 {
@@ -29,7 +30,7 @@ namespace Gcodes.Ast
 
         public bool Equals(Mcode? other)
         {
-            return !ReferenceEquals(other, null) &&
+            return other != null &&
                    base.Equals(other) &&
                    Number == other.Number;
         }
@@ -44,7 +45,7 @@ namespace Gcodes.Ast
 
         public static bool operator ==(Mcode? mcode1, Mcode? mcode2)
         {
-            return mcode1?.Equals(mcode2) ?? false;
+            return EqualityComparer<Mcode?>.Default.Equals(mcode1, mcode2);
         }
 
         public static bool operator !=(Mcode mcode1, Mcode mcode2)

@@ -94,7 +94,7 @@ namespace Gcodes.Ast
 
         public static bool operator ==(Gcode? gcode1, Gcode? gcode2)
         {
-            return gcode1?.Equals(gcode2) ?? false;
+            return EqualityComparer<Gcode?>.Default.Equals(gcode1, gcode2);
         }
 
         public static bool operator !=(Gcode? gcode1, Gcode? gcode2)
