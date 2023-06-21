@@ -23,5 +23,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Gcodes\Gcodes.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Fixtures\371373P.gcode" />
+    <EmbeddedResource Include="Fixtures\371373P.gcode" />
+    <None Remove="Fixtures\circle.gcode" />
+    <EmbeddedResource Include="Fixtures\circle.gcode" />
+    <None Remove="Fixtures\simple_mill.gcode" />
+    <EmbeddedResource Include="Fixtures\simple_mill.gcode" />
+  </ItemGroup>
   
 </Project>
