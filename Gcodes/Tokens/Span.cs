@@ -1,69 +1,70 @@
 ﻿using System;
 using System.Linq;
 
-namespace Gcodes.Tokens
+namespace Gcodes.Tokens;
+
+/// <summary>
+/// A location in the source text as a pair of byte indices.
+/// </summary>
+public readonly struct Span
 {
     /// <summary>
-    /// A location in the source text as a pair of byte indices.
+    ///  The empty span.
     /// </summary>
-    public readonly struct Span
+    public static Span Empty = new(0, 0);
+
+    /// <summary>
+    /// The index a segment of text starts at.
+    /// </summary>
+    public int Start { get; }
+
+    /// <summary>
+    /// The index <b>one after</b> the end of the selected text.
+    /// </summary>
+    public int End { get; }
+
+    public int Length => End - Start;
+
+    public Span(int start, int end)
     {
-        /// <summary>
-        ///  The empty span.
-        /// </summary>
-        public static Span Empty = new(0, 0);
+        Start = start;
+        End = end;
+    }
 
-        /// <summary>
-        /// The index a segment of text starts at.
-        /// </summary>
-        public int Start { get; }
-        /// <summary>
-        /// The index <b>one after</b> the end of the selected text.
-        /// </summary>
-        public int End { get; }
-        public int Length => End - Start;
+    /// <summary>
+    /// Calculate the line number this <see cref="Span"/> starts at.
+    /// </summary>
+    /// <param name="src"></param>
+    /// <returns></returns>
+    public int LineNumber(string src)
+    {
+        var start = Start;
+        return src.Where((_, i) => i < start).Count(c => c == '\n') + 1;
+    }
 
-        public Span(int start, int end)
-        {
-            Start = start;
-            End = end;
-        }
+    /// <summary>
+    /// Determine which column this span starts in.
+    /// </summary>
+    /// <param name="src"></param>
+    /// <returns></returns>
+    public int ColumnNumber(string src)
+    {
+        var lastNewline = src.LastIndexOf('\n', Start);
+        return lastNewline < 0 ? Start : Start - lastNewline;
+    }
 
-        /// <summary>
-        /// Calculate the line number this <see cref="Span"/> starts at.
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        public int LineNumber(string src)
-        {
-            var start = Start;
-            return src.Where((_, i) => i < start).Count(c => c == '\n') + 1;
-        }
+    public override string ToString()
+    {
+        return $"{Start}-{End}";
+    }
 
-        /// <summary>
-        /// Determine which column this span starts in.
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        public int ColumnNumber(string src)
-        {
-            var lastNewline = src.LastIndexOf('\n', Start);
-            return lastNewline < 0 ? Start : Start - lastNewline;
-        }
-
-        public override string ToString()
-        {
-            return $"{Start}-{End}";
-        }
-
-        /// <summary>
-        /// Retrieve the <see cref="Span"/> encompassing two spans.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public Span Merge(Span other)
-        {
-            return new Span(Math.Min(Start, other.Start), Math.Max(End, other.End));
-        }
+    /// <summary>
+    /// Retrieve the <see cref="Span"/> encompassing two spans.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public Span Merge(Span other)
+    {
+        return new Span(Math.Min(Start, other.Start), Math.Max(End, other.End));
     }
 }

@@ -8,7 +8,7 @@ namespace Gcodes.Console
 {
     class Program
     {
-        private static OperationFactory operations = new OperationFactory();
+        private static readonly OperationFactory operations = new();
 
         static int Main(string[] args)
         {

@@ -1,10 +1,9 @@
-﻿namespace Gcodes.Runtime
+﻿namespace Gcodes.Runtime;
+
+public struct MachineState
 {
-    public struct MachineState
-    {
-        public double X;
-        public double Y;
-        public double Z;
-        public double FeedRate;
-    }
+    public double X;
+    public double Y;
+    public double Z;
+    public double FeedRate;
 }

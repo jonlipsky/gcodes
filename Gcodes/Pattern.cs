@@ -1,45 +1,38 @@
 ﻿using Gcodes.Tokens;
 using System.Text.RegularExpressions;
 
-namespace Gcodes
+namespace Gcodes;
+
+internal class Pattern
 {
-    internal class Pattern
+    private readonly Regex _regex;
+    private readonly TokenKind _kind;
+
+    public Pattern(string pattern, TokenKind kind)
     {
-        Regex _regex;
-        TokenKind _kind;
+        if (!pattern.StartsWith(@"\G"))
+            pattern = @"\G" + pattern;
 
-        public Pattern(string pattern, TokenKind kind)
+        _regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        _kind = kind;
+    }
+
+    public bool TryMatch(string src, int startIndex, out Token? tok)
+    {
+        var match = _regex.Match(src, startIndex);
+
+        if (match.Success)
         {
-            if (!pattern.StartsWith(@"\G"))
-                pattern = @"\G" + pattern;
+            var span = new Span(startIndex, startIndex + match.Length);
 
-            _regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            _kind = kind;
+            tok = _kind.HasValue() 
+                ? new Token(span, _kind, match.Value) 
+                : new Token(span, _kind);
+
+            return true;
         }
 
-        public bool TryMatch(string src, int startIndex, out Token tok)
-        {
-            var match = _regex.Match(src, startIndex);
-
-            if (match.Success)
-            {
-                var span = new Span(startIndex, startIndex + match.Length);
-
-                if (_kind.HasValue())
-                {
-                    tok = new Token(span, _kind, match.Value);
-                }
-                else
-                {
-                    tok = new Token(span, _kind);
-                }
-                return true;
-            }
-            else
-            {
-                tok = null;
-                return false;
-            }
-        }
+        tok = null;
+        return false;
     }
 }
